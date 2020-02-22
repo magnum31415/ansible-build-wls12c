@@ -1,0 +1,30 @@
+---
+- name: Create a unix user group - weblogic
+  become: yes
+  become_user: root
+  tags: app,groupcreate
+  group:
+    name: weblogic
+    state: present
+
+- name: Create a unix user and map to weblogic group
+  become: yes
+  become_user: root
+  tags: app,usercreate
+  user:
+    name: "weblogic"
+    comment: "weblogic user"
+    uid: 102
+    group: weblogic
+    state: present
+
+- name: Create a ORACLE_HOME directory
+  become: yes
+  become_user: root
+  tags: app
+  file:
+    dest: "{{oracle_home}}"
+    mode: 0755
+    owner: weblogic
+    group: weblogic
+    state: directory

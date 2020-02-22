@@ -1,0 +1,20 @@
+---
+- include: users.yml
+- include: soft.yml
+
+- name: Update the /etc/hosts file with node name
+  tags: etchostsupdate
+  become: yes
+  become_user: root
+  lineinfile:
+    dest: "/etc/hosts"
+    regexp: "{{ansible_env.SSH_CONNECTION.split(' ')[2]}} {{ansible_hostname}}  {{ansible_hostname}}"
+    line: "{{ item }}"
+    state: present
+    backup: yes
+  register: etchostsupdate
+  with_items:
+    - "{{ hostvars[groups['app'][0]]['ansible_env'].SSH_CONNECTION.split(' ')[2] }}\t{{ hostvars[groups['app'][0]]['ansible_hostname']}}\t{{ hostvars[groups['app'][0]]['ansible_hostname']}}"
+#    - "{{ hostvars[groups['app'][1]]['ansible_env'].SSH_CONNECTION.split(' ')[2] }}\t{{ hostvars[groups['app'][1]]['ansible_hostname']}}\t{{ hostvars[groups['app'][1]]['ansible_hostname']}}"
+
+
